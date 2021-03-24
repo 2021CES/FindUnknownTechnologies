@@ -4,18 +4,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FindUnknownTechnologies {
+    private static final int NUMBER_OF_APPARITIONS_NEEDED_TO_REGISTER_A_TECHNOLOGY = 10;
     private static final String[] EXTENSIONS = {".c", ".cpp", ".hpp", ".cc", ".hh", ".cxx", ".hxx", ".xml", ".h",
             ".xsd", ".dtd", ".xhtml", ".axml", ".xslt", ".xmi", ".ts", ".xcconfig", ".ipa", ".ipsw", ".vcf", ".icns",
             ".plist", ".webarchive", ".scpt", ".pbxproj", ".strings", ".xib", ".storyboard", ".nib", ".entitlements",
@@ -29,7 +27,9 @@ public class FindUnknownTechnologies {
     }
 
     public void runFindUnknownTechnologies () {
-        List<Path> pathList = listFiles(Path.of("C:\\Users\\rauln\\.dx-platform\\projects\\P001\\repository\\Detox"));
+        String projectPath = getPathFromPropertiesFile();
+
+        List<Path> pathList = listFiles(Path.of(projectPath));
 
         List<String> pathUnknownList = listUnknownFiles(pathList);
 
@@ -71,11 +71,7 @@ public class FindUnknownTechnologies {
             if (Pattern.matches(regex, word[word.length-1])) {
                 String myExtension = word[word.length-1].split("\\.")[1];
                 if (technologyList.isEmpty()) {
-                    Technologies technology = new Technologies(myExtension, 1);
-                    String newString = myString.split("[0-9a-zA-Z:\\\\\\.-]*Detox\\\\")[1];
-                    String anotherString = newString.replace ("\\\\", "/");
-                    technology.addPath(anotherString);
-                    technologyList.add(technology);
+                    technologyList.add(new Technologies(myExtension, 0));
                 }
 
                 for (Technologies technology : technologyList) {
@@ -91,7 +87,7 @@ public class FindUnknownTechnologies {
                 }
 
                 if (!ok) {
-                    technologyList.add(new Technologies(myExtension, 1));
+                    technologyList.add(new Technologies(myExtension, 0));
                 }
             }
         }
@@ -101,29 +97,48 @@ public class FindUnknownTechnologies {
         JSONArray finalObject = new JSONArray();
 
         for (Technologies technology : technologyList) {
-            if (technology.getCount() > 9) {
-                JSONObject newObject = new JSONObject();
+            if (technology.getCount() >= NUMBER_OF_APPARITIONS_NEEDED_TO_REGISTER_A_TECHNOLOGY) {
                 try {
                     for (int i = 0; i < technology.getCount() - 1; i++) {
-                        newObject.put("file", technology.getPath(i));
+                        JSONObject newObject = new JSONObject();
+                        String aString = technology.getPath(i);
+                        newObject.put("file", aString);
                         newObject.put("name", technology.getExtension());
                         newObject.put("category", "NewTechnologies");
                         newObject.put("value", technology.getCount());
                         finalObject.put(newObject);
                     }
-                    System.out.println(technology.getExtension() + " added.");
+                    System.out.println("Technology " + technology.getExtension() + " ADDED.");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        try (FileWriter file = new FileWriter("myJSON.JSON")) {
+        try (FileWriter file = new FileWriter("findUTJSON.JSON")) {
             file.write(finalObject.toString());
             file.flush();
-            System.out.println("Salvat in fisier");
+            System.out.println("JSON file created: findUTJSON.JSON");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private String getPathFromPropertiesFile(){
+        try {
+            File file = new File("config.properties");
+            FileInputStream inputStream = new FileInputStream(file);
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            inputStream.close();
+
+            Enumeration keys = properties.keys();
+            String path = properties.getProperty((String) keys.nextElement());
+            return path;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
