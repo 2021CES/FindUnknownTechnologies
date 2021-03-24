@@ -4,13 +4,18 @@
 Find Unknown Technologies program is looking for the most relevant extensions of the unknown type,
 chosen as a relevance value a number greater than or equal to 10 files.
 
-The "findUTJSON" generated file can be integrated in Dx Platform.
+The "findUTJSON.JSON" generated file can be integrated in Dx Platform.
 
 ## Installation
 
-Start by downloading the last available release from this repository. Click on [Releases](https://github.com/2021CES/FindUnknownTechnologies/releases "Go to Releases")
-and download the .zip file.
-Extract the contents of the .zip file in the desired location.
+Start by downloading the last available release from this repository.
+ * Click on [Releases](https://github.com/2021CES/FindUnknownTechnologies/releases "Go to Releases").
+ * Download the .zip file.
+ * Extract the content of the .zip file in the desired location.
+ 
+## Requirements
+
+You MUST have Java 11/above and bash installed in order to run this project.
 
 ## Usage
 
@@ -36,10 +41,17 @@ Open a command prompt(or Powershell window) and type in either of the following 
 ```bash
 run.bat
 ```
-
+You will see the results generated in the findUTJSON.JSON file
 
 ## The Team
 
  * Raul-Claudiu Negrău
  * Mălina Ivan
 
+## Contribute
+
+
+ 
+## Credits
+
+ We would like to thank Java.Our project would not have been possible without your work!
