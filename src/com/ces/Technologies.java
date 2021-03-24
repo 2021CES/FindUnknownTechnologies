@@ -8,23 +8,14 @@ public class Technologies {
     private List<String> paths;
     private int count;
 
-
-    public Technologies(String extension) {
-        this(extension, new ArrayList<>(),0);
-    }
-
     public Technologies(String extension, int count) {
-        this(extension, new ArrayList<>(),count);
+        this(extension, new ArrayList<>(), count);
     }
 
     public Technologies(String extension, List<String> paths, int count) {
         this.extension = extension;
         this.paths = paths;
         this.count = count;
-    }
-
-    public boolean foundTechnology(String extension) {
-        return this.extension == extension;
     }
 
     public String getExtension() {
