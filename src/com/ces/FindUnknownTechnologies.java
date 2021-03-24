@@ -1,5 +1,10 @@
 package com.ces;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,11 +22,10 @@ public class FindUnknownTechnologies {
             ".xcscheme", ".yaml", ".yml", ".resx", ".properties", ".gitignore", ".gitmodules", ".jschema", ".jws",
             ".json", ".gradle", "gradlew", ".jsm", ".js", ".sh", ".bat", ".bsh", ".md", ".txt", ".java", ".swift"};
 
-
-//    private static final String[] EXTENSIONS = {".java", ".txt"};
+    private List<Technologies> technologyList;
 
     public FindUnknownTechnologies() {
-
+        technologyList = new ArrayList<>();
     }
 
     public void runFindUnknownTechnologies () {
@@ -30,6 +34,8 @@ public class FindUnknownTechnologies {
         List<String> pathUnknownList = listUnknownFiles(pathList);
 
         findAndCountUniqueTechnologies(pathUnknownList);
+
+        saveResult();
     }
 
     private List<Path> listFiles (Path path) {
@@ -56,17 +62,68 @@ public class FindUnknownTechnologies {
         return result;
     }
 
-    private List<Technologies> findAndCountUniqueTechnologies(List<String> unknownPaths) {
-        List<Technologies> technologyList = new ArrayList<>();
-
+    private void findAndCountUniqueTechnologies(List<String> unknownPaths) {
+        boolean ok = true;
 
         for (String myString : unknownPaths) {
             String regex = "[a-zA-Z]+\\.[a-zA-Z]+$";
             String[] word = myString.split("\\\\");
             if (Pattern.matches(regex, word[word.length-1])) {
-                System.out.println(word[word.length-1].split("\\.")[1]);
+                String myExtension = word[word.length-1].split("\\.")[1];
+                if (technologyList.isEmpty()) {
+                    Technologies technology = new Technologies(myExtension, 1);
+                    String newString = myString.split("[0-9a-zA-Z:\\\\\\.-]*Detox\\\\")[1];
+                    String anotherString = newString.replace ("\\\\", "/");
+                    technology.addPath(anotherString);
+                    technologyList.add(technology);
+                }
+
+                for (Technologies technology : technologyList) {
+                    ok = false;
+                    if (myExtension.equals(technology.getExtension())) {
+                        technology.increaseCounter();
+                        String newString = myString.split("[0-9a-zA-Z:\\\\\\.-]*Detox\\\\")[1];
+                        String anotherString = newString.replace ("\\", "/");
+                        technology.addPath(anotherString);
+                        ok = true;
+                        break;
+                    }
+                }
+
+                if (!ok) {
+                    technologyList.add(new Technologies(myExtension, 1));
+                }
             }
         }
-        return null;
+    }
+
+    private void saveResult () {
+        JSONArray finalObject = new JSONArray();
+
+        for (Technologies technology : technologyList) {
+            if (technology.getCount() > 9) {
+                JSONObject newObject = new JSONObject();
+                try {
+                    for (int i = 0; i < technology.getCount() - 1; i++) {
+                        newObject.put("file", technology.getPath(i));
+                        newObject.put("name", technology.getExtension());
+                        newObject.put("category", "NewTechnologies");
+                        newObject.put("value", technology.getCount());
+                        finalObject.put(newObject);
+                    }
+                    System.out.println(technology.getExtension() + " added.");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        try (FileWriter file = new FileWriter("myJSON.JSON")) {
+            file.write(finalObject.toString());
+            file.flush();
+            System.out.println("Salvat in fisier");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
