@@ -36,7 +36,7 @@ IMPORTANT
 DO NOT add spaces before or after the config file entries
 Specify the absolute project path(starting from the root folder)
 ```
-Open a command prompt(or Powershell window) and type in either of the following commands:
+Open a command prompt and type in either of the following command:
 ```bash
 run.bat
 ```
