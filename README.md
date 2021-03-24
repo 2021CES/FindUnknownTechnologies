@@ -23,8 +23,7 @@ You MUST have Java 11/above to run this project.
 
 ![Screenshot 2021-03-24 235113](https://user-images.githubusercontent.com/13180495/112388474-dd280700-8cfb-11eb-9f4a-72bd0d658d3f.png)
 
-* After extraction, modify the project path.
-Project name and os_type entries from config.properties file. For example:
+* After extraction, modify the project path. For example:
 
 ```bash
 projectName=FindUT
