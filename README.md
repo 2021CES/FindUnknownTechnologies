@@ -43,15 +43,14 @@ run.bat
 ```
 You will see the results generated in the findUTJSON.JSON file
 
+![Screenshot 2021-03-25 001355](https://user-images.githubusercontent.com/13180495/112390485-13b35100-8cff-11eb-8763-799804cdc8cf.png)
+
+
 ## The Team
 
  * Raul-Claudiu Negrău
  * Mălina Ivan
 
-## Contribute
-
-
- 
 ## Credits
 
  We would like to thank Java.Our project would not have been possible without your work!
